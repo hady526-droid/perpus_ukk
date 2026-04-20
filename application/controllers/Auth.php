@@ -5,95 +5,107 @@ class Auth extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+
         $this->load->model('Auth_model');
+        $this->load->library(['session', 'form_validation']);
+        $this->load->helper(['url', 'form']);
+        $this->load->database(); // 🔥 WAJIB
     }
 
+    // ================= LOGIN PAGE =================
     public function index() {
-        // Jika sudah login, redirect ke dashboard
+
         if ($this->session->userdata('logged_in')) {
-            $role = $this->session->userdata('role');
-            if ($role == 'admin') {
-                redirect('admin');
-            } else {
-                redirect('siswa');
-            }
+            redirect($this->session->userdata('role') == 'admin' ? 'admin' : 'siswa');
         }
-        
+
         $this->load->view('auth/login');
     }
 
+    // ================= PROSES LOGIN =================
     public function login() {
+
         $this->form_validation->set_rules('username', 'Username', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
         if ($this->form_validation->run() == FALSE) {
+
             $this->load->view('auth/login');
+
         } else {
-            $username = $this->input->post('username');
-            $password = $this->input->post('password');
 
-            $user = $this->Auth_model->login($username, $password);
+            $username = $this->input->post('username', TRUE);
+            $password = $this->input->post('password', TRUE);
 
-            if ($user) {
-                $session_data = array(
-                    'user_id' => $user['id'],
-                    'username' => $user['username'],
-                    'role' => $user['role'],
+            $user = $this->Auth_model->get_by_username($username);
+
+            if ($user && password_verify($password, $user['password'])) {
+
+                $this->session->set_userdata([
+                    'user_id'    => $user['id'],
+                    'username'   => $user['username'],
+                    'role'       => $user['role'],
                     'id_anggota' => $user['id_anggota'],
-                    'logged_in' => TRUE
-                );
-                $this->session->set_userdata($session_data);
+                    'logged_in'  => TRUE
+                ]);
 
-                if ($user['role'] == 'admin') {
-                    redirect('admin');
-                } else {
-                    redirect('siswa');
-                }
+                redirect($user['role'] == 'admin' ? 'admin' : 'siswa');
+
             } else {
-                $this->session->set_flashdata('error', 'Username atau password salah!');
+                $this->session->set_flashdata('error', 'Username / Password salah!');
                 redirect('auth');
             }
         }
     }
 
+    // ================= REGISTER =================
     public function register() {
+
         $this->form_validation->set_rules('nis', 'NIS', 'required|trim|is_unique[anggota.nis]');
         $this->form_validation->set_rules('nama', 'Nama', 'required|trim');
         $this->form_validation->set_rules('kelas', 'Kelas', 'required|trim');
-        $this->form_validation->set_rules('password', 'Password', 'required|trim|min_length[6]');
-        $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'required|trim|matches[password]');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
+        $this->form_validation->set_rules('password_confirm', 'Konfirmasi Password', 'required|matches[password]');
 
         if ($this->form_validation->run() == FALSE) {
+
             $this->load->view('auth/register');
+
         } else {
-            $data_anggota = array(
-                'nis' => $this->input->post('nis'),
-                'nama' => $this->input->post('nama'),
-                'kelas' => $this->input->post('kelas'),
-                'alamat' => $this->input->post('alamat'),
-                'telepon' => $this->input->post('telepon')
-            );
 
-            $id_anggota = $this->Auth_model->register_anggota($data_anggota);
+            // SIMPAN ANGGOTA
+            $data_anggota = [
+                'nis'      => $this->input->post('nis', TRUE),
+                'nama'     => $this->input->post('nama', TRUE),
+                'kelas'    => $this->input->post('kelas', TRUE),
+                'alamat'   => $this->input->post('alamat', TRUE),
+                'telepon'  => $this->input->post('telepon', TRUE)
+            ];
 
-            if ($id_anggota) {
-                $data_user = array(
-                    'username' => $this->input->post('nis'),
-                    'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-                    'role' => 'siswa',
-                    'id_anggota' => $id_anggota
-                );
+            $this->db->insert('anggota', $data_anggota);
+            $id_anggota = $this->db->insert_id();
 
-                $this->Auth_model->register_user($data_user);
-                $this->session->set_flashdata('success', 'Registrasi berhasil! Silakan login.');
-                redirect('auth');
-            } else {
-                $this->session->set_flashdata('error', 'Registrasi gagal!');
+            if (!$id_anggota) {
+                $this->session->set_flashdata('error', 'Gagal simpan anggota!');
                 redirect('auth/register');
             }
+
+            // SIMPAN USER
+            $data_user = [
+                'username'   => $this->input->post('nis', TRUE),
+                'password'   => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+                'role'       => 'siswa',
+                'id_anggota' => $id_anggota
+            ];
+
+            $this->db->insert('users', $data_user);
+
+            $this->session->set_flashdata('success', 'Registrasi berhasil! Silakan login.');
+            redirect('auth');
         }
     }
 
+    // ================= LOGOUT =================
     public function logout() {
         $this->session->sess_destroy();
         redirect('auth');

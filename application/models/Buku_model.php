@@ -39,4 +39,34 @@ class Buku_model extends CI_Model {
     public function count_all() {
         return $this->db->count_all($this->table);
     }
+
+    // ================= FILTER BARU =================
+    public function get_filtered($keyword = null, $kategori = null)
+    {
+        $this->db->from($this->table);
+
+        // SEARCH (judul & pengarang)
+        if (!empty($keyword)) {
+            $this->db->group_start();
+            $this->db->like('judul', $keyword);
+            $this->db->or_like('pengarang', $keyword);
+            $this->db->group_end();
+        }
+
+        // FILTER KATEGORI
+        if (!empty($kategori)) {
+            $this->db->where('kategori', $kategori);
+        }
+
+        $this->db->order_by('judul', 'ASC');
+        return $this->db->get()->result_array();
+    }
+
+    // AMBIL LIST KATEGORI (UNIK)
+    public function get_kategori()
+    {
+        $this->db->select('kategori');
+        $this->db->group_by('kategori');
+        return $this->db->get($this->table)->result_array();
+    }
 }

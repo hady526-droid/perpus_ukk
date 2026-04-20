@@ -1,222 +1,145 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Perpustakaan Digital</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<title>Login - Perpustakaan</title>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        .login-container {
-            width: 100%;
-            max-width: 450px;
-        }
+<style>
+/* ================= BACKGROUND ================= */
+body {
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
 
-        .login-card {
-            background: white;
-            border-radius: 24px;
-            padding: 50px 40px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            animation: slideUp 0.6s ease-out;
-        }
+    background: linear-gradient(135deg, #0d6efd, #3a86ff, #6ea8fe);
+    background-size: 300% 300%;
+    animation: gradientMove 8s ease infinite;
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+/* Animasi gradient */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-        .logo i {
-            font-size: 64px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+/* ================= CARD ================= */
+.login-card {
+    width: 360px;
+    padding: 30px;
+    border-radius: 20px;
 
-        .logo h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-top: 15px;
-        }
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
 
-        .logo p {
-            color: #6c757d;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    color: white;
+    text-align: center;
+}
 
-        .form-floating {
-            margin-bottom: 20px;
-        }
+/* ICON */
+.logo {
+    font-size: 45px;
+    margin-bottom: 10px;
+}
 
-        .form-floating .form-control {
-            border-radius: 12px;
-            border: 2px solid #e9ecef;
-            padding: 20px 15px 10px;
-            height: 60px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+/* TITLE */
+.login-card h3 {
+    font-weight: bold;
+}
 
-        .form-floating .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-        }
+/* INPUT */
+.form-control {
+    border-radius: 12px;
+    border: none;
+    padding: 12px;
 
-        .form-floating label {
-            padding: 18px 15px;
-            color: #6c757d;
-        }
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
 
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
+.form-control::placeholder {
+    color: #e0e0e0;
+}
 
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
+.form-control:focus {
+    background: rgba(255,255,255,0.3);
+    box-shadow: none;
+    color: white;
+}
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
+/* BUTTON */
+.btn-login {
+    background: white;
+    color: #0d6efd;
+    border-radius: 12px;
+    padding: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-        .register-link {
-            text-align: center;
-            margin-top: 25px;
-            color: #6c757d;
-        }
+.btn-login:hover {
+    background: #e6f0ff;
+}
 
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
+/* LINK */
+a {
+    color: #fff;
+    text-decoration: underline;
+}
 
-        .register-link a:hover {
-            color: #764ba2;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .input-group-text {
-            background: transparent;
-            border: none;
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            color: #6c757d;
-        }
-
-        .validation-error {
-            color: #e17055;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-    </style>
+a:hover {
+    color: #dbeafe;
+}
+</style>
 </head>
+
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="logo">
-                <i class="bi bi-book-half"></i>
-                <h1>Perpustakaan Digital</h1>
-                <p>Silakan masuk untuk melanjutkan</p>
-            </div>
 
-            <?php if ($this->session->flashdata('success')): ?>
-                <div class="alert alert-success">
-                    <i class="bi bi-check-circle me-2"></i>
-                    <?= $this->session->flashdata('success') ?>
-                </div>
-            <?php endif; ?>
+<div class="login-card">
 
-            <?php if ($this->session->flashdata('error')): ?>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-                    <?= $this->session->flashdata('error') ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="<?= base_url('auth/login') ?>" method="post">
-                <div class="form-floating">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="<?= set_value('username') ?>" required>
-                    <label for="username"><i class="bi bi-person me-2"></i>Username / NIS</label>
-                </div>
-                <?= form_error('username', '<div class="validation-error">', '</div>') ?>
-
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                    <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
-                </div>
-                <?= form_error('password', '<div class="validation-error">', '</div>') ?>
-
-                <button type="submit" class="btn-login">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
-                </button>
-            </form>
-
-            <div class="register-link">
-                Belum punya akun? <a href="<?= base_url('auth/register') ?>">Daftar Sekarang</a>
-            </div>
-        </div>
+    <div class="logo">
+        <i class="bi bi-book"></i>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <h3>Perpustakaan Digital</h3>
+    <p class="mb-4">Silakan login untuk melanjutkan</p>
+
+    <!-- ALERT -->
+    <?php if($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger py-2">
+            <?= $this->session->flashdata('error') ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" action="<?= base_url('auth/login') ?>">
+
+        <div class="mb-3 text-start">
+            <label>Username / NIS</label>
+            <input type="text" name="username" class="form-control" required>
+        </div>
+
+        <div class="mb-3 text-start">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+
+        <button class="btn btn-login w-100 mb-3">
+            <i class="bi bi-box-arrow-in-right"></i> Masuk
+        </button>
+
+    </form>
+
+    <small>Belum punya akun? <a href="#">Daftar</a></small>
+
+</div>
+
 </body>
 </html>

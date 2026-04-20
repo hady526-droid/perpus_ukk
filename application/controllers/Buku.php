@@ -16,14 +16,27 @@ class Buku extends CI_Controller {
     }
 
     public function index() {
-        $data['title'] = 'Kelola Data Buku';
-        $data['buku'] = $this->Buku_model->get_all();
-        
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar_admin', $data);
-        $this->load->view('admin/buku/index', $data);
-        $this->load->view('templates/footer');
-    }
+    $data['title'] = 'Kelola Data Buku';
+
+    // Ambil input GET
+    $keyword = $this->input->get('keyword');
+    $kategori = $this->input->get('kategori');
+
+    // Kirim ke view
+    $data['keyword'] = $keyword;
+    $data['kategori'] = $kategori;
+
+    // Ambil data dengan filter
+    $data['buku'] = $this->Buku_model->get_filtered($keyword, $kategori);
+
+    // Ambil kategori unik
+    $data['kategori_list'] = $this->Buku_model->get_kategori();
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('templates/sidebar_admin', $data);
+    $this->load->view('admin/buku/index', $data);
+    $this->load->view('templates/footer');
+}
 
     public function tambah() {
         $this->form_validation->set_rules('kode_buku', 'Kode Buku', 'required|trim|is_unique[buku.kode_buku]');
